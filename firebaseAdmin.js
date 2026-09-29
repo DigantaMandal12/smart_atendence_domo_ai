@@ -13,11 +13,38 @@ const {
 
 
 // =====================================
-// SERVICE ACCOUNT
+// FIREBASE ADMIN CREDENTIALS
 // =====================================
 
-const serviceAccount =
-    require("./serviceAccountKey.json");
+let serviceAccount;
+
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+
+    // Vercel / production
+    try {
+
+        serviceAccount =
+            JSON.parse(
+                process.env.FIREBASE_SERVICE_ACCOUNT
+            );
+
+    } catch (error) {
+
+        console.error(
+            "FIREBASE_SERVICE_ACCOUNT is not valid JSON."
+        );
+
+        throw error;
+
+    }
+
+} else {
+
+    // Local development
+    serviceAccount =
+        require("./serviceAccountKey.json");
+
+}
 
 
 // =====================================
@@ -33,7 +60,7 @@ initializeApp({
 
 
 // =====================================
-// SERVICES
+// FIREBASE SERVICES
 // =====================================
 
 const adminAuth =
