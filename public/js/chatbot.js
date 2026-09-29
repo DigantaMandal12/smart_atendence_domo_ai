@@ -1,41 +1,299 @@
-const chatBox = document.getElementById("chatBox");
+const chatBox =
+    document.getElementById("chatBox");
 
-const messageInput = document.getElementById("messageInput");
+const messageInput =
+    document.getElementById("messageInput");
 
-const sendButton = document.getElementById("sendButton");
+const sendButton =
+    document.getElementById("sendButton");
 
-
-// Add message to chat
-function addMessage(message, type) {
-
-    const messageDiv = document.createElement("div");
-
-    messageDiv.className = `message ${type}`;
+const typingIndicator =
+    document.getElementById("typingIndicator");
 
 
-    const contentDiv = document.createElement("div");
+// =========================================
+// MARKED CONFIGURATION
+// =========================================
 
-    contentDiv.className = "message-content";
+marked.setOptions({
+
+    gfm: true,
+
+    breaks: true
+
+});
 
 
-    // Convert line breaks
-    contentDiv.innerHTML = message.replace(/\n/g, "<br>");
+// =========================================
+// RENDER MARKDOWN
+// =========================================
 
+function renderMarkdown(message) {
 
-    messageDiv.appendChild(contentDiv);
+    const html =
+        marked.parse(message);
 
-    chatBox.appendChild(messageDiv);
+    return DOMPurify.sanitize(html);
 
-
-    // Scroll to bottom
-    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 
-// Send message
+// =========================================
+// DETECT LANGUAGE
+// =========================================
+
+function detectLanguage(className = "") {
+
+    const match =
+        className.match(
+            /language-([\w+-]+)/
+        );
+
+    return match
+        ? match[1]
+        : "code";
+
+}
+
+
+// =========================================
+// ADD COPY BUTTONS
+// =========================================
+
+function enhanceCodeBlocks(container) {
+
+    const blocks =
+        container.querySelectorAll("pre");
+
+    blocks.forEach(pre => {
+
+        const code =
+            pre.querySelector("code");
+
+        if (!code) {
+            return;
+        }
+
+
+        const language =
+            detectLanguage(
+                code.className
+            );
+
+
+        // Prevent duplicate header
+
+        if (
+            pre.querySelector(".code-header")
+        ) {
+            return;
+        }
+
+
+        const header =
+            document.createElement("div");
+
+        header.className =
+            "code-header";
+
+
+        const label =
+            document.createElement("span");
+
+        label.className =
+            "code-language";
+
+        label.textContent =
+            language;
+
+
+        const copyButton =
+            document.createElement("button");
+
+        copyButton.className =
+            "copy-button";
+
+        copyButton.textContent =
+            "Copy";
+
+
+        copyButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    await navigator.clipboard.writeText(
+                        code.innerText
+                    );
+
+                    copyButton.textContent =
+                        "Copied ✓";
+
+
+                    setTimeout(() => {
+
+                        copyButton.textContent =
+                            "Copy";
+
+                    }, 1500);
+
+                } catch (error) {
+
+                    console.error(
+                        "Copy failed:",
+                        error
+                    );
+
+                    copyButton.textContent =
+                        "Failed";
+
+                }
+
+            }
+        );
+
+
+        header.appendChild(label);
+
+        header.appendChild(copyButton);
+
+        pre.prepend(header);
+
+    });
+
+}
+
+
+// =========================================
+// ADD MESSAGE
+// =========================================
+
+function addMessage(
+    message,
+    type
+) {
+
+    const row =
+        document.createElement("div");
+
+
+    row.className =
+        type === "user"
+            ? "message-row user-row"
+            : "message-row bot-row";
+
+
+    // Avatar
+
+    const avatar =
+        document.createElement("div");
+
+
+    avatar.className =
+        "ai-avatar";
+
+
+    avatar.textContent =
+        type === "user"
+            ? "👤"
+            : "🎓";
+
+
+    // Message
+
+    const bubble =
+        document.createElement("div");
+
+
+    bubble.className =
+        type === "user"
+            ? "message user-message"
+            : "message bot-message";
+
+
+    if (type === "user") {
+
+        bubble.textContent =
+            message;
+
+    } else {
+
+        bubble.classList.add(
+            "message-content"
+        );
+
+        bubble.innerHTML =
+            renderMarkdown(message);
+
+        enhanceCodeBlocks(bubble);
+
+    }
+
+
+    row.appendChild(avatar);
+
+    row.appendChild(bubble);
+
+    chatBox.appendChild(row);
+
+
+    scrollToBottom();
+
+}
+
+
+// =========================================
+// SCROLL
+// =========================================
+
+function scrollToBottom() {
+
+    chatBox.scrollTo({
+
+        top:
+            chatBox.scrollHeight,
+
+        behavior:
+            "smooth"
+
+    });
+
+}
+
+
+// =========================================
+// TYPING
+// =========================================
+
+function showTyping() {
+
+    typingIndicator.classList.remove(
+        "hidden"
+    );
+
+    scrollToBottom();
+
+}
+
+
+function hideTyping() {
+
+    typingIndicator.classList.add(
+        "hidden"
+    );
+
+}
+
+
+// =========================================
+// SEND MESSAGE
+// =========================================
+
 async function sendMessage() {
 
-    const message = messageInput.value.trim();
+    const message =
+        messageInput.value.trim();
 
 
     if (!message) {
@@ -43,51 +301,90 @@ async function sendMessage() {
     }
 
 
-    // Show user message
-    addMessage(message, "user");
+    // User message
+
+    addMessage(
+        message,
+        "user"
+    );
 
 
     // Clear input
+
     messageInput.value = "";
 
 
-    // Disable button
-    sendButton.disabled = true;
+    // Disable send
 
-    sendButton.textContent = "Thinking...";
+    sendButton.disabled =
+        true;
+
+    sendButton.querySelector(
+        "span:first-child"
+    ).textContent =
+        "Thinking";
+
+
+    showTyping();
 
 
     try {
 
-        const response = await fetch("/api/chat", {
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method:
+                        "POST",
 
-            method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                message: message
-            })
-
-        });
-
-
-        const data = await response.json();
+                    body:
+                        JSON.stringify({
+                            message:
+                                message
+                        })
+                }
+            );
 
 
-        if (data.error) {
+        const data =
+            await response.json();
+
+
+        hideTyping();
+
+
+        if (!response.ok) {
 
             addMessage(
-                "❌ " + data.error,
+
+                data.error ||
+                "Something went wrong.",
+
+                "bot"
+
+            );
+
+            return;
+
+        }
+
+
+        if (data.answer) {
+
+            addMessage(
+                data.answer,
                 "bot"
             );
 
         } else {
 
             addMessage(
-                data.answer,
+                "The AI returned an empty response.",
                 "bot"
             );
 
@@ -96,37 +393,65 @@ async function sendMessage() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Chat error:",
+            error
+        );
+
+
+        hideTyping();
+
 
         addMessage(
-            "❌ Unable to connect to the server.",
+
+            "Unable to connect to the server. Please try again.",
+
             "bot"
+
         );
 
     }
 
 
-    // Enable button
-    sendButton.disabled = false;
+    sendButton.disabled =
+        false;
 
-    sendButton.textContent = "Send";
+
+    sendButton.querySelector(
+        "span:first-child"
+    ).textContent =
+        "Send";
+
+
+    messageInput.focus();
 
 }
 
 
-// Button click
+// =========================================
+// SEND BUTTON
+// =========================================
+
 sendButton.addEventListener(
     "click",
     sendMessage
 );
 
 
-// Enter key
+// =========================================
+// ENTER KEY
+// =========================================
+
 messageInput.addEventListener(
     "keydown",
-    function (event) {
+    event => {
 
-        if (event.key === "Enter") {
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
 
             sendMessage();
 
@@ -134,3 +459,10 @@ messageInput.addEventListener(
 
     }
 );
+
+
+// =========================================
+// INITIAL FOCUS
+// =========================================
+
+messageInput.focus();
