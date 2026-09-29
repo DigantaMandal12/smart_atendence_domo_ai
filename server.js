@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
-const { GoogleGenAI } = require("@google/genai");
 
 const academicData = require("./academicData");
 
@@ -10,10 +9,13 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Gemini AI
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
-});
+
+// ===============================
+// OpenRouter Configuration
+// ===============================
+
+const OPENROUTER_API_URL =
+    "https://openrouter.ai/api/v1/chat/completions";
 
 
 // ===============================
@@ -96,6 +98,10 @@ app.post("/api/chat", async (req, res) => {
         const question = req.body.message;
 
 
+        // ===============================
+        // Validate Question
+        // ===============================
+
         if (!question) {
 
             return res.status(400).json({
@@ -107,7 +113,26 @@ app.post("/api/chat", async (req, res) => {
         }
 
 
-        // Find relevant data
+        // ===============================
+        // Check OpenRouter API Key
+        // ===============================
+
+        if (!process.env.OPENROUTER_API_KEY) {
+
+            return res.status(500).json({
+
+                error:
+                    "OpenRouter API key is not configured."
+
+            });
+
+        }
+
+
+        // ===============================
+        // Find Relevant Academic Data
+        // ===============================
+
         const relevantData =
             findRelevantData(question);
 
@@ -142,7 +167,7 @@ ${item.content}
 
 
         // ===============================
-        // Gemini Prompt
+        // AI Prompt
         // ===============================
 
         const prompt = `
@@ -200,21 +225,102 @@ ANSWER
 
 
         // ===============================
-        // Gemini Request
+        // OpenRouter API Request
         // ===============================
 
-        const response = await ai.interactions.create({
+        const response = await fetch(
+            OPENROUTER_API_URL,
+            {
+                method: "POST",
 
-    model: "gemini-3.8-flash",
+                headers: {
+                    "Authorization":
+                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
 
-    input: prompt
+                    "Content-Type":
+                        "application/json",
 
-});
+                    "HTTP-Referer":
+                        "https://smart-atendence-domo-ai.vercel.app",
 
-        const answer = response.output_text;
+                    "X-Title":
+                        "Smart Academic AI"
+                },
+
+                body: JSON.stringify({
+
+                    model: "openrouter/free",
+
+                    messages: [
+
+                        {
+                            role: "system",
+
+                            content:
+                                "You are a helpful academic study assistant. Follow the provided academic data carefully."
+                        },
+
+                        {
+                            role: "user",
+
+                            content: prompt
+                        }
+
+                    ]
+
+                })
+
+            }
+        );
 
 
-     
+        // ===============================
+        // Read OpenRouter Response
+        // ===============================
+
+        const data = await response.json();
+
+
+        // ===============================
+        // Handle API Error
+        // ===============================
+
+        if (!response.ok) {
+
+            console.error(
+                "OpenRouter API Error:",
+                data
+            );
+
+            return res.status(500).json({
+
+                error:
+                    data?.error?.message ||
+                    "OpenRouter API request failed."
+
+            });
+
+        }
+
+
+        // ===============================
+        // Get AI Answer
+        // ===============================
+
+        const answer =
+            data?.choices?.[0]?.message?.content;
+
+
+        if (!answer) {
+
+            return res.status(500).json({
+
+                error:
+                    "OpenRouter returned an empty response."
+
+            });
+
+        }
 
 
         // ===============================
@@ -234,13 +340,13 @@ ANSWER
     } catch (error) {
 
         console.error(
-            "========== GEMINI ERROR =========="
+            "========== OPENROUTER ERROR =========="
         );
 
         console.error(error);
 
         console.error(
-            "=================================="
+            "======================================"
         );
 
 
@@ -248,7 +354,7 @@ ANSWER
 
             error:
                 error.message ||
-                "Gemini API error"
+                "OpenRouter API error."
 
         });
 
@@ -262,9 +368,16 @@ ANSWER
 // ===============================
 
 if (require.main === module) {
+
     app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
+
+        console.log(
+            `Server running at http://localhost:${PORT}`
+        );
+
     });
+
 }
+
 
 module.exports = app;
