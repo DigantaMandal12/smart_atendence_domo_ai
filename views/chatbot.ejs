@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -21,35 +22,51 @@
         href="/css/chatbot.css"
     >
 
-    <!-- Markdown -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
-    </script>
+    <!-- =========================================
+         MARKDOWN
+    ========================================== -->
 
-    <!-- XSS Protection -->
     <script
-        src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js">
-    </script>
+        src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
+    ></script>
+
+
+    <!-- =========================================
+         XSS PROTECTION
+    ========================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"
+    ></script>
 
 </head>
 
+
 <body>
+
 
     <main class="page-wrapper">
 
+
         <section class="chat-container">
 
-            <!-- ==============================
+
+            <!-- =========================================
                  HEADER
-            =============================== -->
+            ========================================== -->
 
             <header class="chat-header">
 
+
+                <!-- BRAND -->
+
                 <div class="brand-section">
+
 
                     <div class="ai-avatar large">
                         🎓
                     </div>
+
 
                     <div class="brand-text">
 
@@ -66,52 +83,128 @@
                 </div>
 
 
-                <div class="online-status">
+                <!-- HEADER ACTIONS -->
 
-                    <span class="online-dot"></span>
+                <div class="header-actions">
 
-                    <span>
-                        Online
-                    </span>
+
+                    <!-- PROFILE -->
+
+                    <a
+                        href="/profile"
+                        class="profile-button"
+                        title="My Profile"
+                    >
+
+                        <span class="profile-icon">
+                            👤
+                        </span>
+
+
+                        <span class="profile-name">
+
+                            <%= user && user.name
+                                ? user.name
+                                : "Profile" %>
+
+                        </span>
+
+                    </a>
+
+
+                    <!-- ONLINE -->
+
+                    <div class="online-status">
+
+                        <span
+                            class="online-dot"
+                        ></span>
+
+                        <span>
+                            Online
+                        </span>
+
+                    </div>
+
+
+                    <!-- LOGOUT -->
+
+                    <button
+                        id="logoutButton"
+                        class="logout-button"
+                        type="button"
+                        title="Logout"
+                    >
+
+                        <span>
+                            🚪
+                        </span>
+
+                        <span class="logout-text">
+                            Logout
+                        </span>
+
+                    </button>
+
 
                 </div>
 
             </header>
 
 
-            <!-- ==============================
+
+            <!-- =========================================
                  CONVERSATION
-            =============================== -->
+            ========================================== -->
 
             <section
                 id="chatBox"
                 class="chat-box"
             >
 
-                <!-- Welcome Message -->
 
-                <div class="message-row bot-row">
+                <!-- WELCOME MESSAGE -->
+
+                <div
+                    class="message-row bot-row"
+                >
+
 
                     <div class="ai-avatar">
                         🎓
                     </div>
 
-                    <div class="message bot-message">
 
-                        <div class="message-title">
-                            👋 Hello! I'm your Smart Academic AI.
+                    <div
+                        class="message bot-message"
+                    >
+
+
+                        <div
+                            class="message-title"
+                        >
+                            👋 Hello!
+                            I'm your Smart Academic AI.
                         </div>
 
+
                         <p>
-                            I can help you understand subjects,
-                            solve questions and prepare for exams.
+                            I can help you understand
+                            subjects, solve questions
+                            and prepare for exams.
                         </p>
 
-                        <p class="ask-title">
+
+                        <p
+                            class="ask-title"
+                        >
                             You can ask me about:
                         </p>
 
-                        <ul class="topic-list">
+
+                        <ul
+                            class="topic-list"
+                        >
 
                             <li>
                                 📚 Data Structures
@@ -138,20 +231,27 @@
             </section>
 
 
-            <!-- ==============================
+
+            <!-- =========================================
                  TYPING INDICATOR
-            =============================== -->
+            ========================================== -->
 
             <div
                 id="typingIndicator"
                 class="typing-indicator hidden"
             >
 
-                <div class="typing-avatar">
+
+                <div
+                    class="typing-avatar"
+                >
                     🎓
                 </div>
 
-                <div class="typing-bubble">
+
+                <div
+                    class="typing-bubble"
+                >
 
                     <span></span>
                     <span></span>
@@ -166,11 +266,13 @@
             </div>
 
 
-            <!-- ==============================
-                 INPUT
-            =============================== -->
+
+            <!-- =========================================
+                 INPUT / COMPOSER
+            ========================================== -->
 
             <footer class="composer">
+
 
                 <div class="input-wrapper">
 
@@ -184,6 +286,7 @@
 
                 </div>
 
+
                 <button
                     id="sendButton"
                     class="send-button"
@@ -194,7 +297,9 @@
                         Send
                     </span>
 
-                    <span class="send-icon">
+                    <span
+                        class="send-icon"
+                    >
                         ➤
                     </span>
 
@@ -202,12 +307,113 @@
 
             </footer>
 
+
         </section>
 
     </main>
 
 
-    <script src="/js/chatbot.js"></script>
+
+    <!-- =========================================
+         LOGOUT SCRIPT
+    ========================================== -->
+
+    <script>
+
+        const logoutButton =
+            document.getElementById(
+                "logoutButton"
+            );
+
+
+        logoutButton?.addEventListener(
+            "click",
+            async () => {
+
+
+                const confirmed =
+                    window.confirm(
+                        "Are you sure you want to logout?"
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                try {
+
+
+                    logoutButton.disabled =
+                        true;
+
+
+                    logoutButton.innerHTML =
+                        "⏳";
+
+
+                    const response =
+                        await fetch(
+                            "/logout",
+                            {
+                                method: "POST",
+                                credentials: "include"
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Logout failed."
+                        );
+
+                    }
+
+
+                    window.location.href =
+                        "/login";
+
+
+                } catch (error) {
+
+
+                    console.error(
+                        "Logout error:",
+                        error
+                    );
+
+
+                    logoutButton.disabled =
+                        false;
+
+
+                    logoutButton.innerHTML =
+                        "🚪 <span class='logout-text'>Logout</span>";
+
+
+                    alert(
+                        "Unable to logout. Please try again."
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
+
+
+
+    <!-- =========================================
+         CHATBOT JAVASCRIPT
+    ========================================== -->
+
+    <script
+        src="/js/chatbot.js"
+    ></script>
+
 
 </body>
 

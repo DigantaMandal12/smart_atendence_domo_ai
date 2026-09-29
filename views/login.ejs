@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+    <title>Login | Smart Academic AI</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/auth.css"
+    >
+
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🎓
+            </div>
+
+            <div>
+
+                <h1>
+                    Smart Academic AI
+                </h1>
+
+                <p>
+                    AI Study Assistant
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="auth-heading">
+
+            <h2>
+                Welcome back
+            </h2>
+
+            <p>
+                Login to continue your academic journey.
+            </p>
+
+        </div>
+
+
+        <div
+            id="authError"
+            class="alert error hidden"
+        ></div>
+
+
+        <div
+            id="authSuccess"
+            class="alert success hidden"
+        ></div>
+
+
+        <form
+            id="loginForm"
+            autocomplete="off"
+            novalidate
+        >
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email address
+                </label>
+
+                <div class="input-box">
+
+                    <span>
+                        ✉️
+                    </span>
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        autocomplete="username"
+                        inputmode="email"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <div class="label-row">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <button
+                        type="button"
+                        id="forgotPassword"
+                        class="link-button"
+                    >
+                        Forgot password?
+                    </button>
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="eye-button"
+                        data-target="password"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <label class="checkbox-label">
+
+                <input
+                    id="rememberMe"
+                    type="checkbox"
+                    checked
+                >
+
+                <span>
+                    Remember me
+                </span>
+
+            </label>
+
+
+            <button
+                id="loginButton"
+                type="submit"
+                class="primary-button"
+            >
+
+                <span class="button-text">
+                    Login
+                </span>
+
+                <span class="loader hidden"></span>
+
+            </button>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="/register">
+                Create account
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    type="module"
+    src="/js/auth.js"
+></script>
+
+</body>
+
+</html>

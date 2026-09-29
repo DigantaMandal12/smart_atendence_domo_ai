@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile | Smart Academic AI</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/auth.css"
+    >
+
+    <style>
+
+        .profile-page {
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .profile-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5
+            );
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .profile-title h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        .profile-title p {
+            margin: 5px 0 0;
+            color: #64748b;
+        }
+
+        .back-button {
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .profile-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow:
+                0 20px 50px
+                rgba(15, 23, 42, .08);
+        }
+
+        .profile-section {
+            margin-bottom: 28px;
+        }
+
+        .profile-section h2 {
+            margin-bottom: 6px;
+            font-size: 18px;
+        }
+
+        .profile-section p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .profile-field {
+            margin-bottom: 4px;
+        }
+
+        .profile-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .profile-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .profile-field input,
+        .profile-field select {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #dbe2ea;
+            border-radius: 11px;
+            padding: 0 13px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .profile-field input:focus,
+        .profile-field select:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow:
+                0 0 0 3px
+                rgba(37, 99, 235, .10);
+        }
+
+        .readonly-input {
+            opacity: .75;
+            cursor: not-allowed;
+        }
+
+        .saved-message {
+            padding: 12px 14px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .save-button {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: 11px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #1d4ed8
+                );
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .cancel-button {
+            flex: 1;
+            height: 48px;
+            border-radius: 11px;
+            border: 1px solid #dbe2ea;
+            background: white;
+            color: #334155;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .danger-zone {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .logout-button {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 11px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-field.full {
+                grid-column: auto;
+            }
+
+            .profile-header {
+                align-items: flex-start;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="profile-page">
+
+    <div class="profile-container">
+
+        <!-- HEADER -->
+
+        <div class="profile-header">
+
+            <div class="profile-title">
+
+                <div class="profile-avatar">
+
+                    <%= (user.name || "S").charAt(0).toUpperCase() %>
+
+                </div>
+
+                <div>
+
+                    <h1>
+                        My Profile
+                    </h1>
+
+                    <p>
+                        Manage your academic information
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="/"
+                class="back-button"
+            >
+                ← Back to AI
+            </a>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <% if (typeof query !== "undefined" && query.saved) { %>
+
+                <div class="saved-message">
+                    ✓ Profile updated successfully.
+                </div>
+
+            <% } %>
+
+
+            <!-- PROFILE -->
+
+            <div class="profile-section">
+
+                <h2>
+                    Personal information
+                </h2>
+
+                <p>
+                    This information helps Smart Academic AI
+                    personalize your academic assistance.
+                </p>
+
+
+                <form
+                    action="/profile"
+                    method="POST"
+                >
+
+                    <div class="profile-grid">
+
+                        <!-- NAME -->
+
+                        <div class="profile-field full">
+
+    <label for="name">
+        Full name
+    </label>
+
+    <input
+        id="name"
+        name="name"
+        type="text"
+        value="<%= user && user.name ? user.name : '' %>"
+        minlength="2"
+        maxlength="80"
+        autocomplete="name"
+        required
+    >
+
+</div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="profile-field full">
+
+                            <label for="email">
+                                Email address
+                            </label>
+
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value="<%= user.email || '' %>"
+                                class="readonly-input"
+                                readonly
+                            >
+
+                        </div>
+
+
+                        <!-- SEMESTER -->
+
+                        <div class="profile-field">
+
+                            <label for="semester">
+                                Semester
+                            </label>
+
+                            <select
+                                id="semester"
+                                name="semester"
+                            >
+
+                                <option
+                                    value=""
+                                    <%= !user.semester ? "selected" : "" %>
+                                >
+                                    Select semester
+                                </option>
+
+                                <option
+                                    value="1st"
+                                    <%= user.semester === "1st" ? "selected" : "" %>
+                                >
+                                    1st Semester
+                                </option>
+
+                                <option
+                                    value="2nd"
+                                    <%= user.semester === "2nd" ? "selected" : "" %>
+                                >
+                                    2nd Semester
+                                </option>
+
+                                <option
+                                    value="3rd"
+                                    <%= user.semester === "3rd" ? "selected" : "" %>
+                                >
+                                    3rd Semester
+                                </option>
+
+                                <option
+                                    value="4th"
+                                    <%= user.semester === "4th" ? "selected" : "" %>
+                                >
+                                    4th Semester
+                                </option>
+
+                                <option
+                                    value="5th"
+                                    <%= user.semester === "5th" ? "selected" : "" %>
+                                >
+                                    5th Semester
+                                </option>
+
+                                <option
+                                    value="6th"
+                                    <%= user.semester === "6th" ? "selected" : "" %>
+                                >
+                                    6th Semester
+                                </option>
+
+                                <option
+                                    value="7th"
+                                    <%= user.semester === "7th" ? "selected" : "" %>
+                                >
+                                    7th Semester
+                                </option>
+
+                                <option
+                                    value="8th"
+                                    <%= user.semester === "8th" ? "selected" : "" %>
+                                >
+                                    8th Semester
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- BRANCH -->
+
+                        <div class="profile-field">
+
+                            <label for="branch">
+                                Branch
+                            </label>
+
+                            <select
+                                id="branch"
+                                name="branch"
+                            >
+
+                                <option
+                                    value=""
+                                    <%= !user.branch ? "selected" : "" %>
+                                >
+                                    Select branch
+                                </option>
+
+                                <option
+                                    value="CSE"
+                                    <%= user.branch === "CSE" ? "selected" : "" %>
+                                >
+                                    CSE
+                                </option>
+
+                                <option
+                                    value="IT"
+                                    <%= user.branch === "IT" ? "selected" : "" %>
+                                >
+                                    IT
+                                </option>
+
+                                <option
+                                    value="ECE"
+                                    <%= user.branch === "ECE" ? "selected" : "" %>
+                                >
+                                    ECE
+                                </option>
+
+                                <option
+                                    value="EE"
+                                    <%= user.branch === "EE" ? "selected" : "" %>
+                                >
+                                    EE
+                                </option>
+
+                                <option
+                                    value="ME"
+                                    <%= user.branch === "ME" ? "selected" : "" %>
+                                >
+                                    ME
+                                </option>
+
+                                <option
+                                    value="CE"
+                                    <%= user.branch === "CE" ? "selected" : "" %>
+                                    >
+                                    CE
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- LANGUAGE -->
+
+                        <div class="profile-field full">
+
+                            <label for="preferredLanguage">
+                                Preferred AI Language
+                            </label>
+
+                            <select
+                                id="preferredLanguage"
+                                name="preferredLanguage"
+                            >
+
+                                <option
+                                    value="English"
+                                    <%= user.preferredLanguage === "English" ? "selected" : "" %>
+                                >
+                                    English
+                                </option>
+
+                                <option
+                                    value="Hindi"
+                                    <%= user.preferredLanguage === "Hindi" ? "selected" : "" %>
+                                >
+                                    Hindi
+                                </option>
+
+                                <option
+                                    value="Bengali"
+                                    <%= user.preferredLanguage === "Bengali" ? "selected" : "" %>
+                                >
+                                    Bengali
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-actions">
+
+                        <a
+                            href="/"
+                            class="cancel-button"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="save-button"
+                        >
+                            Save changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- LOGOUT -->
+
+            <div class="danger-zone">
+
+                <button
+                    id="logoutButton"
+                    class="logout-button"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to logout?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/logout",
+                        {
+                            method: "POST",
+                            credentials: "include"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Logout failed."
+                    );
+
+                }
+
+
+                window.location.href =
+                    "/login";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                alert(
+                    "Unable to logout. Please try again."
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

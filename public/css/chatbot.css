@@ -1265,3 +1265,221 @@ body {
     }
 
 }
+
+/* =========================================
+   HEADER ACTIONS
+========================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* =========================================
+   PROFILE BUTTON
+========================================= */
+
+.profile-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.18);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.12);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        0.2s ease;
+}
+
+
+.profile-button:hover {
+    background:
+        rgba(255, 255, 255, 0.20);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.profile-icon {
+    font-size: 16px;
+}
+
+
+.profile-name {
+    max-width: 130px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================
+   LOGOUT BUTTON
+========================================= */
+
+.logout-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.18);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        0.2s ease;
+}
+
+
+.logout-button:hover {
+    background:
+        rgba(255, 255, 255, 0.20);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.logout-button:disabled {
+    opacity: 0.65;
+
+    cursor: wait;
+}
+
+
+/* =========================================
+   ONLINE STATUS
+========================================= */
+
+.online-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding:
+        0 13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(0, 0, 0, 0.12);
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.online-dot {
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(34, 197, 94, 0.12);
+}
+
+
+/* =========================================
+   PROFILE MOBILE
+========================================= */
+
+@media (max-width: 800px) {
+
+    .profile-name {
+        display: none;
+    }
+
+    .profile-button {
+        padding:
+            0 11px;
+    }
+
+    .logout-text {
+        display: none;
+    }
+
+    .logout-button {
+        padding:
+            0 11px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .header-actions {
+        gap: 5px;
+    }
+
+    .online-status {
+        padding:
+            0 9px;
+    }
+
+    .online-status span:last-child {
+        display: none;
+    }
+
+}
